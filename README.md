@@ -9,7 +9,7 @@ noise in statistics of Batch Normalization (BN) to improve their generalization.
 Implementation-wise, APART class in the file `apart.py` allows users to deploy APART by a few lines. 
 The file `simple_example.py` provides an example of deploying `APART` with additional **FOUR** lines
 to improve a CIFAR model.
-Also, this repository contains the code for reproducing the results in the paper.
+Also, this repository contains the code in `main` for reproducing the results in the paper.
 
 
 ## Setup
@@ -17,7 +17,7 @@ Also, this repository contains the code for reproducing the results in the paper
 **Environment**:
 
 - [PyTorch 1.10.2](https://pytorch.org/)
-- [PyTorch-Lightning 1.5.10](https://www.pytorchlightning.ai/) (Optional, required by complete experiments)
+- [PyTorch-Lightning 1.5.10](https://www.pytorchlightning.ai/) (Optional, required by reproducing the complete experiments)
 
 
 ## Usage
