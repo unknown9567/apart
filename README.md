@@ -48,8 +48,8 @@ for x, y in dataloader:
     
     # first step of APART
     with apart.to_proxy(): # prepare for the first step
-        loss = r * loss_function(model(x), y) # normal forward pass
-        loss.backward() # normal backward pass
+        loss = loss_function(model(x), y) # normal forward pass
+        (r * loss).backward() # normal backward pass
         
     # second step of APART
     with apart.to_adver(): # prepare for the second step
