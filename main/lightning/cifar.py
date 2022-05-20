@@ -1,12 +1,36 @@
-import yaml
-import argparse
-from pathlib import Path
-
 import torch
 import pytorch_lightning as pl
+from torchvision import datasets
+from torchvision import transforms as T
 
 from main import models
 from main.utils import DATA_DIR, get_func_kwargs
+
+
+class CIFAR(torch.utils.data.Dataset):
+
+    normalize = T.Normalize([0.4914, 0.4822, 0.4465], [0.2471, 0.2435, 0.2616])
+
+    def __init__(self, train, augmentation=False, dataset='cifar10'):
+        dataset_cls = datasets.__dict__[dataset.upper()]
+        transforms = []
+        if augmentation:
+            transforms.extend([T.RandomCrop(32, 4), T.RandomHorizontalFlip()])
+        transforms.append(T.ToTensor())
+        transforms.append(self.normalize)
+        self.dataset = dataset_cls(
+            str(DATA_DIR / 'datasets' / 'cifar'), download=True, train=train,
+            transform=T.Compose(transforms)
+        )
+
+    def __len__(self):
+        return len(self.dataset)
+
+    def __getitem__(self, item):
+        return self.dataset[item]
+
+    def __iter__(self):
+        return iter(self.dataset)
 
 
 class CIFARModelBase(pl.LightningModule):
@@ -26,6 +50,10 @@ class CIFARModelBase(pl.LightningModule):
             torch.save(model.state_dict(), weight_path)
         return model
 
+    def setup(self, stage=None):
+        self.train_dataset = CIFAR(True, True, self.hparams.dataset)
+        self.val_dataset = CIFAR(False, False, self.hparams.dataset)
+
     def configure_optimizers(self):
         args = self.hparams
         optimizer = torch.optim.SGD(
@@ -36,6 +64,28 @@ class CIFARModelBase(pl.LightningModule):
             optimizer, [int(0.5 * args.epochs), int(0.75 * args.epochs)], 0.1
         )
         return [optimizer], [scheduler]
+
+    def classify(self, out, y):
+        return self.criterion(out, y), (out.argmax(-1) == y).float().mean()
+
+    def on_epoch_end(self):
+        super(CIFARModelBase, self).on_epoch_end()
+        torch.cuda.empty_cache()
+
+    def train_dataloader(self):
+        args = self.hparams
+        return torch.utils.data.DataLoader(
+            self.train_dataset, shuffle=True,
+            batch_size=args.batch_size, num_workers=args.num_workers,
+            pin_memory=False, drop_last=getattr(args, 'drop_last', False)
+        )
+
+    def val_dataloader(self):
+        args = self.hparams
+        return torch.utils.data.DataLoader(
+            self.val_dataset, shuffle=False, batch_size=args.batch_size,
+            num_workers=args.num_workers, pin_memory=False
+        )
 
     @staticmethod
     def add_model_specific_args(parent_parser):
