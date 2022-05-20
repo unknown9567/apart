@@ -69,49 +69,11 @@ class ImageNetModelBase(pl.LightningModule):
     @staticmethod
     def add_model_specific_args(parent_parser):
         parser = parent_parser.add_argument_group('ImageNetModelBase')
+        parser.add_argument('--data_dir', required=True, type=str)
         parser.add_argument('-b', '--batch_size', default=256, type=int)
-        parser.add_argument('--epochs', default=90, type=int)
+        parser.add_argument('--epochs', default=105, type=int)
         parser.add_argument('--num_workers', default=8, type=int)
         parser.add_argument('--lr', default=0.1, type=float)
         parser.add_argument('--momentum', default=0.9, type=float)
         parser.add_argument('--weight_decay', default=1e-4, type=float)
         return parent_parser
-
-
-def get_imagenet_base_parser(model_cls):
-    parser = argparse.ArgumentParser()
-    # base
-    parser.add_argument('--resume', action='store_true')
-    parser.add_argument('--resume_dir', default='', type=str)
-    parser.add_argument('--data_dir', required=True, type=str)
-    parser.add_argument('--seed', default=42, type=int)
-    # model
-    parser = model_cls.add_model_specific_args(parser)
-    # trainer
-    parser = pl.Trainer.add_argparse_args(parser)
-    # use GPUs by default
-    if torch.cuda.is_available():
-        parser.set_defaults(gpus=1, strategy='ddp')
-    return parser
-
-
-def get_imagenet_model_and_trainer(model_cls, args, default_root_dir, epochs=None):
-    args.max_epochs = epochs or args.epochs
-    args.default_root_dir = str(default_root_dir)
-    if args.strategy == 'ddp' or args.accelerator == 'ddp':
-        args.batch_size = int(args.batch_size / max(1, args.gpus))
-        args.num_workers = int(args.num_workers / max(1, args.gpus))
-        args.sync_batchnorm = (args.gpus > 1)
-    pl.seed_everything(args.seed)
-    if args.resume:
-        assert args.resume_dir
-        checkpoint_path = sorted(Path(args.resume_dir).rglob('*.ckpt'),
-                                 key=lambda x: int(x.stem.split('-')[0][6:]))[-1]
-        with open(Path(args.resume_dir) / 'hparams.yaml', 'r') as f:
-            args.__dict__.update(yaml.load(f, Loader=yaml.FullLoader))
-        args.resume_from_checkpoint = str(checkpoint_path)
-        model = model_cls.load_from_checkpoint(checkpoint_path, **vars(args))
-    else:
-        model = model_cls(**vars(args))
-    trainer = pl.Trainer.from_argparse_args(args, callbacks=[MeterlessProgressBar()])
-    return model, trainer

@@ -18,6 +18,7 @@ Also, this repository contains the code in `main` for reproducing the results in
 
 - [PyTorch 1.10.2](https://pytorch.org/)
 - [PyTorch-Lightning 1.5.10](https://www.pytorchlightning.ai/) (Optional, required by reproducing the complete experiments)
+- [PyYAML 6.0](https://pyyaml.org/) (Optional, required by reproducing the complete experiments)
 
 
 ## Usage
