@@ -27,20 +27,20 @@ APART computes two forward-backward passes at each step of gradient descent meth
 The weighted sum of the gradients in these two steps is eventually the gradient for 
 updating the parameters. Meanwhile, Pytorch allows gradient accumulation just by 
 keeping `grad` in the variables without employing the method `zero_grad` of `torch.nn.Module`. 
-In summary, just keep in mind that APART requires two backward passes over the same samples without `zero_grad`
-the parameters' gradients:
+In summary, just keep in mind that APART requires two backward passes over the same samples without 
+deploying `zero_grad` in the intermediate step between these two passes:
 ```python
 from apart import APART
 # get the dataloader for your dataset
+# if APART's argument `groups` > 1 
 # the last incomplete batch in each epoch should 
 # be dropped (set drop_last=True in PyTorch's DataLoader) 
-# if APART's argument `groups` > 1 
 dataloader = ... 
 model = YourModel() # should include Batch Normalization layers
 optimizer = ... # instantiate a regular optimizer for your model
 apart = APART(model, epsilon, groups) # instantiate APART
 N = ... # set number of samples used in APART's second step, <= batch_size
-r = batch_size / (batch_size + N) # the weight of the first loss
+r = batch_size / (batch_size + N) # the weight of the loss in the first step
 ...
 
 for x, y in dataloader:
