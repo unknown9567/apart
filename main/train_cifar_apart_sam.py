@@ -41,27 +41,23 @@ class CIFARModel(CIFARModelBase):
         else:
             raise Exception(f'Unknown mode: {mode}')
 
-    def closure(self, batch, log):
+    def training_step(self, batch, batch_idx):
+        self.zero_grad()
         x, y = batch
         ratio = self.hparams.ratio
 
         out = self(x, 'proxy')
         loss = F.cross_entropy(out, y)
-        if log:
-            self.log('loss', loss, on_step=False, on_epoch=True)
-            self.log('acc', self.topk_acc(out, y)[0], on_step=False, on_epoch=True)
+        self.log('loss', loss, on_step=False, on_epoch=True)
+        self.log('acc', self.topk_acc(out, y)[0], on_step=False, on_epoch=True)
         self.manual_backward(1.0 / (1.0 + ratio) * loss)
+        self.optimizers().first_step(zero_grad=False)
 
         split = int(ratio * x.size(0))
         self.manual_backward(
             ratio / (1.0 + ratio) * F.cross_entropy(self(x[:split], 'adver'), y[:split])
         )
-        return loss
-
-    def training_step(self, batch, batch_idx):
-        self.zero_grad()
-        self.closure(batch, True)
-        self.optimizers().step(lambda: self.closure(batch, False))
+        self.optimizers().second_step(zero_grad=False)
 
         if self.trainer.is_last_batch:
             self.lr_schedulers().step()
