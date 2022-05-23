@@ -99,6 +99,7 @@ class TinyImageNetModelBase(pl.LightningModule):
     def add_model_specific_args(parent_parser):
         parser = parent_parser.add_argument_group('TinyImageNetModelBase')
         parser.add_argument('--data_dir', required=True, type=str)
+        parser.add_argument('--model', default='preact_resnet18', type=str)
         parser.add_argument('-b', '--batch_size', default=256, type=int)
         parser.add_argument('--epochs', default=200, type=int)
         parser.add_argument('--num_workers', default=4, type=int)

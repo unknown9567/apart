@@ -82,6 +82,7 @@ class ImageNetModelBase(pl.LightningModule):
     def add_model_specific_args(parent_parser):
         parser = parent_parser.add_argument_group('ImageNetModelBase')
         parser.add_argument('--data_dir', required=True, type=str)
+        parser.add_argument('--model', default='resnet18', type=str)
         parser.add_argument('-b', '--batch_size', default=256, type=int)
         parser.add_argument('--epochs', default=105, type=int)
         parser.add_argument('--num_workers', default=8, type=int)

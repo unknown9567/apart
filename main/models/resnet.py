@@ -97,7 +97,7 @@ class PreActResNet(nn.Module):
         return out
 
 
-def pre_act_resnet18(num_classes=10):
+def preact_resnet18(num_classes=10):
     return PreActResNet(PreActBlock, [2, 2, 2, 2], num_classes=num_classes)
 
 
