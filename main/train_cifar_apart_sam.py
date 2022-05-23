@@ -88,7 +88,7 @@ def get_parser():
     parser = parent_parser.add_argument_group('SAM')
     parser.add_argument('--rho', default=0.1, type=float,
                         help='perturbation radius of SAM')
-    return parser
+    return parent_parser
 
 
 def main():

@@ -66,7 +66,7 @@ def get_parser():
                         help='perturbation radius of APART')
     parser.add_argument('-g', '--groups', default=0, type=int,
                         help='group number of APART')
-    return parser
+    return parent_parser
 
 
 def main():
