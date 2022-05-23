@@ -65,9 +65,6 @@ class CIFARModelBase(pl.LightningModule):
         )
         return [optimizer], [scheduler]
 
-    def classify(self, out, y):
-        return self.criterion(out, y), (out.argmax(-1) == y).float().mean()
-
     def on_epoch_end(self):
         super(CIFARModelBase, self).on_epoch_end()
         torch.cuda.empty_cache()
@@ -88,8 +85,21 @@ class CIFARModelBase(pl.LightningModule):
         )
 
     @staticmethod
+    def topk_acc(out, y, topk=(1,)):
+        _, indices = out.topk(max(topk), -1)
+        acc_list = []
+        for k in topk:
+            is_correct = ((indices[:, :k].unsqueeze(-1) ==
+                           y.view(-1, 1, 1)).long().sum(1) > 0)
+            acc_list.append(is_correct.float().mean())
+        return acc_list
+
+    @staticmethod
     def add_model_specific_args(parent_parser):
         parser = parent_parser.add_argument_group('CIFARModelBase')
+        parser.add_argument('--dataset', required=True, type=str,
+                            choices=['cifar10', 'cifar100'])
+        parser.add_argument('--model', default='WideResNet40_2', type=str)
         parser.add_argument('-b', '--batch_size', default=128, type=int)
         parser.add_argument('--epochs', default=200, type=int)
         parser.add_argument('--num_workers', default=4, type=int)
