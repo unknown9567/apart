@@ -1,5 +1,3 @@
-import yaml
-import argparse
 from pathlib import Path
 
 import torch
@@ -7,7 +5,8 @@ import pytorch_lightning as pl
 from torchvision import transforms as T
 from torchvision.datasets import ImageFolder
 
-from .progress_bar import MeterlessProgressBar
+from main import models
+from main.utils import DATA_DIR, get_func_kwargs
 
 
 class ImageNetModelBase(pl.LightningModule):
@@ -15,6 +14,19 @@ class ImageNetModelBase(pl.LightningModule):
     normalize = T.Normalize(
         mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]
     )
+
+    def get_model(self):
+        args = self.hparams
+        model = args.model.lower()
+        weight_path = DATA_DIR / 'imagenet' / f'{model}_seed_{args.seed}.pth'
+        model_cls = {k.lower(): v for k, v in vars(models).items()}[model]
+        model = model_cls(**get_func_kwargs(model_cls, vars(args)), num_classes=200)
+        weight_path.parent.mkdir(parents=True, exist_ok=True)
+        if weight_path.is_file():
+            model.load_state_dict(torch.load(weight_path, 'cpu'))
+        else:
+            torch.save(model.state_dict(), weight_path)
+        return model
 
     def setup(self, stage=None):
         self.train_dataset = \
