@@ -15,8 +15,7 @@ class ImageNetModel(ImageNetModelBase):
         self.save_hyperparameters()
         assert self.hparams.ratio > 0.0
         self.model = self.get_model()
-        self.apart = APART(self.model, self.hparams.epsilon,
-                           self.hparams.groups)
+        self.apart = APART(self.model, self.hparams.epsilon, self.hparams.groups)
         self.automatic_optimization = False
 
     def configure_optimizers(self):
