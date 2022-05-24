@@ -116,26 +116,74 @@ python3 --dataset cifar100 --model resnet18 --epsilon 0.1 --groups 16
 including the experiments of the standard method, APART and APART-SAM over
 CIFAR-10, CIFAR-100, Tiny-ImageNet and ImageNet.
 
-#### CIFAR-10 & CIFAR-100
+#### CIFAR
 
-run `main/train_cifar_standard.py` for the standard method:
+standard method:
 ```python
-python main/train_cifar_standard.py --dataset cifar10/cifar100 --model wideresnet40_2/preact_resnet
+python main/train_cifar_standard.py --dataset cifar100 --model wideresnet40_2
 ```
 
-run `main/train_cifar_apart.py` for APART:
+APART:
 ```python
-python main/train_cifar_apart.py --dataset cifar10/cifar100 --model wideresnet40_2/preact_resnet \
+python main/train_cifar_apart.py --dataset cifar100 --model wideresnet40_2 \
 --ratio 1 --epsilon 0.1 --groups 16
 ```
 
-run `main/train_cifar_apart_sam.py` for APART-SAM:
+APART-SAM:
 ```python
-python main/train_cifar_apart.py --dataset cifar10/cifar100 --model wideresnet40_2/preact_resnet \
+python main/train_cifar_apart_sam.py --dataset cifar100 --model wideresnet40_2 \
 --ratio 1 --epsilon 0.1 --groups 16 \
 --rho 0.1
 ```
 
-#### Tiny-ImageNet & ImageNet
+#### Tiny-ImageNet
+
+standard method:
+```python
+python main/train_tiny_imagenet_standard.py --data_dir path/to/tiny-imagenet --model preact_resnet18 \
+```
+
+APART:
+```python
+python main/train_tiny_imagenet_apart.py --data_dir path/to/tiny-imagenet --model preact_resnet18 \
+--ratio 1 --epsilon 0.1 --groups 8
+```
+
+APART-SAM:
+```python
+python main/train_tiny_imagenet_apart_sam.py --data_dir path/to/tiny-imagenet --model preact_resnet18 \
+--ratio 1 --epsilon 0.1 --groups 8 \
+--rho 0.1
+```
+
+#### ImageNet
+
+standard method:
+```python
+python main/train_imagenet_standard.py --data_dir path/to/tiny-imagenet --model resnet18 \
+```
+
+APART:
+```python
+python main/train_imagenet_apart.py --data_dir path/to/tiny-imagenet --model resnet18 \
+--ratio 1 --epsilon 0.025 --groups 1
+```
+
+APART-SAM:
+```python
+python main/train_imagenet_apart_sam.py --data_dir path/to/tiny-imagenet --model resnet18 \
+--ratio 1 --epsilon 0.025 --groups 1 \
+--rho 0.05
+```
+
+#### GPUs
+
+To set the number of GPUs used in training, use `--gpus`
+
+#### Output
+
+The results will be stored in the generated directory `logs`, e.g., `logs/cifar100/standard/lightning/version_0`
+
+Use `tensorboard --logdir=logs/cifar100/standard` to see the results
 
 <br>
