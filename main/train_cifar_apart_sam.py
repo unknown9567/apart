@@ -29,6 +29,11 @@ class CIFARModel(CIFARModelBase):
         )
         return [optimizer], [scheduler]
 
+    def on_train_start(self):
+        if self.hparams.sync_batchnorm:
+            self.apart = APART(self.model, self.hparams.epsilon, self.hparams.groups)
+        super(CIFARModel, self).on_train_start()
+
     def forward(self, x, mode='original'):
         if mode == 'original':
             return self.model(x)

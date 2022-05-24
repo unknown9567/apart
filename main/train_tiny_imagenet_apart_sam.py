@@ -29,6 +29,11 @@ class TinyImageNetModel(TinyImageNetModelBase):
         )
         return [optimizer], [scheduler]
 
+    def on_train_start(self):
+        if self.hparams.sync_batchnorm:
+            self.apart = APART(self.model, self.hparams.epsilon, self.hparams.groups)
+        super(TinyImageNetModel, self).on_train_start()
+
     def forward(self, x, mode='original'):
         if mode == 'original':
             return self.model(x)
@@ -45,7 +50,7 @@ class TinyImageNetModel(TinyImageNetModelBase):
         self.zero_grad()
         x, y = batch
         ratio = self.hparams.ratio
-        
+
         out = self(x, 'proxy')
         loss = F.cross_entropy(out, y)
         top1, top5 = self.topk_acc(out, y, [1, 5])
