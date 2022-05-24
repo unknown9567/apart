@@ -182,7 +182,8 @@ To set the number of GPUs used in training, use `--gpus`
 
 #### Output
 
-The results will be stored in the generated directory `logs`, e.g., `logs/cifar100/standard/lightning/version_0`
+The results will be stored in the generated directory `logs`, e.g., 
+`logs/cifar100/standard/lightning_logs/version_0`
 
 Use `tensorboard --logdir=logs/cifar100/standard` to see the results
 
