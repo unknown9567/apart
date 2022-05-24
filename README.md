@@ -17,16 +17,15 @@ Also, this repository contains the code in `main` for reproducing the results in
 **Environment**:
 
 - [PyTorch 1.10.2](https://pytorch.org/)
-- [PyTorch-Lightning 1.5.10](https://www.pytorchlightning.ai/) (Optional, required by reproducing the complete experiments)
-- [PyYAML 6.0](https://pyyaml.org/) (Optional, required by reproducing the complete experiments)
+- [PyTorch-Lightning 1.5.10](https://www.pytorchlightning.ai/) (Optional, required by reproducing the complete experiments in `main`)
+- [PyYAML 6.0](https://pyyaml.org/) (Optional, required by reproducing the complete experiments in `main`)
 
 
 ## Usage
 
 APART computes two forward-backward passes at each step of gradient descent methods. 
 The weighted sum of the gradients in these two steps is eventually the gradient for 
-updating the parameters. Meanwhile, Pytorch allows gradient accumulation just by 
-keeping `grad` in the variables without employing the method `zero_grad` of `torch.nn.Module`. 
+updating the parameters. Meanwhile, Pytorch uses gradient accumulation allowed by PyTorch. 
 In summary, just keep in mind that APART requires two backward passes over the same samples without 
 deploying `zero_grad` in the intermediate step between these two passes:
 ```python
@@ -94,5 +93,49 @@ with apart.to_adver():
     ... # perform forward and backward passes
 ```
 
+
+## How to train
+
+Once the repo is cloned, experiments can be run using 
+`simple_example.py` or `main/train_*_*.py`.
+
+### Simple Example
+
+`simple_example.py` shows how to deploy `APART` class in `apart.py` by a simple example, 
+which also contains the code implementing a standard training pipeline and provides 
+the comparison between the standard method and APART.
+
+run `simple_example.py`:
+```python
+python3 --dataset cifar100 --model resnet18 --epsilon 0.1 --groups 16
+```
+
+### Main Experiments
+
+`main` contains the code for reproducing main experiments in the paper, 
+including the experiments of the standard method, APART and APART-SAM over
+CIFAR-10, CIFAR-100, Tiny-ImageNet and ImageNet.
+
+#### CIFAR-10 & CIFAR-100
+
+run `main/train_cifar_standard.py` for the standard method:
+```python
+python main/train_cifar_standard.py --dataset cifar10/cifar100 --model wideresnet40_2/preact_resnet
+```
+
+run `main/train_cifar_apart.py` for APART:
+```python
+python main/train_cifar_apart.py --dataset cifar10/cifar100 --model wideresnet40_2/preact_resnet \
+--ratio 1 --epsilon 0.1 --groups 16
+```
+
+run `main/train_cifar_apart_sam.py` for APART-SAM:
+```python
+python main/train_cifar_apart.py --dataset cifar10/cifar100 --model wideresnet40_2/preact_resnet \
+--ratio 1 --epsilon 0.1 --groups 16 \
+--rho 0.1
+```
+
+#### Tiny-ImageNet & ImageNet
 
 <br>
