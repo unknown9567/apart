@@ -133,7 +133,7 @@ APART-SAM:
 ```python
 python main/train_cifar_apart_sam.py --dataset cifar100 --model wideresnet40_2 \
 --ratio 1 --epsilon 0.1 --groups 16 \
---rho 0.1
+--rho 0.2
 ```
 
 #### Tiny-ImageNet
@@ -153,7 +153,7 @@ APART-SAM:
 ```python
 python main/train_tiny_imagenet_apart_sam.py --data_dir path/to/tiny-imagenet --model preact_resnet18 \
 --ratio 1 --epsilon 0.1 --groups 8 \
---rho 0.1
+--rho 0.2
 ```
 
 #### ImageNet
@@ -173,7 +173,7 @@ APART-SAM:
 ```python
 python main/train_imagenet_apart_sam.py --data_dir path/to/tiny-imagenet --model resnet18 \
 --ratio 1 --epsilon 0.025 --groups 1 \
---rho 0.05
+--rho 0.025
 ```
 
 #### GPUs
