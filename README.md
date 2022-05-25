@@ -56,7 +56,7 @@ for x, y in dataloader:
         # adversarial forward and backward passes over a subset of this batch
         ((1 - r) * loss_function(model(x[:N]), y[:N])).backward()
         
-    optimizer.zero_grad() # perform the regular gradient update
+    optimizer.step() # perform the regular gradient update
     
     ... # log the loss
     
