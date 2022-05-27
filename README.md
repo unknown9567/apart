@@ -107,7 +107,7 @@ the comparison between the standard method and APART.
 
 run `simple_example.py`:
 ```python
-python --dataset cifar100 --model resnet18 --epsilon 0.1 --groups 16
+python simple_example.py --dataset cifar100 --model resnet18 --epsilon 0.1 --groups 16
 ```
 
 ### Main Experiments
