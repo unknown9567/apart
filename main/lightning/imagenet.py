@@ -20,7 +20,7 @@ class ImageNetModelBase(pl.LightningModule):
         model = args.model.lower()
         weight_path = DATA_DIR / 'imagenet' / f'{model}_seed_{args.seed}.pth'
         model_cls = {k.lower(): v for k, v in vars(models).items()}[model]
-        model = model_cls(**get_func_kwargs(model_cls, vars(args)), num_classes=200)
+        model = model_cls(**get_func_kwargs(model_cls, vars(args)), num_classes=1000)
         weight_path.parent.mkdir(parents=True, exist_ok=True)
         if weight_path.is_file():
             model.load_state_dict(torch.load(weight_path, 'cpu'))
