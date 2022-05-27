@@ -140,18 +140,18 @@ python main/train_cifar_apart_sam.py --dataset cifar100 --model wideresnet40_2 \
 
 standard method:
 ```python
-python main/train_tiny_imagenet_standard.py --data_dir path/to/tiny-imagenet --model preact_resnet18 \
+python main/train_tiny_imagenet_standard.py --data_dir /path/to/tiny-imagenet --model preact_resnet18
 ```
 
 APART:
 ```python
-python main/train_tiny_imagenet_apart.py --data_dir path/to/tiny-imagenet --model preact_resnet18 \
+python main/train_tiny_imagenet_apart.py --data_dir /path/to/tiny-imagenet --model preact_resnet18 \
 --ratio 1 --epsilon 0.1 --groups 8
 ```
 
 APART-SAM:
 ```python
-python main/train_tiny_imagenet_apart_sam.py --data_dir path/to/tiny-imagenet --model preact_resnet18 \
+python main/train_tiny_imagenet_apart_sam.py --data_dir /path/to/tiny-imagenet --model preact_resnet18 \
 --ratio 1 --epsilon 0.1 --groups 8 \
 --rho 0.2
 ```
@@ -160,25 +160,25 @@ python main/train_tiny_imagenet_apart_sam.py --data_dir path/to/tiny-imagenet --
 
 standard method:
 ```python
-python main/train_imagenet_standard.py --data_dir path/to/imagenet --model resnet18 \
+python main/train_imagenet_standard.py --data_dir /path/to/imagenet --model resnet18
 ```
 
 APART:
 ```python
-python main/train_imagenet_apart.py --data_dir path/to/imagenet --model resnet18 \
+python main/train_imagenet_apart.py --data_dir /path/to/imagenet --model resnet18 \
 --ratio 1 --epsilon 0.025 --groups 1
 ```
 
 APART-SAM:
 ```python
-python main/train_imagenet_apart_sam.py --data_dir path/to/imagenet --model resnet18 \
+python main/train_imagenet_apart_sam.py --data_dir /path/to/imagenet --model resnet18 \
 --ratio 1 --epsilon 0.025 --groups 1 \
 --rho 0.025
 ```
 
 #### Data
 
-`path/to/tiny-imagenet` and `path/to/imagenet` should contain `train` and `val` 
+`/path/to/tiny-imagenet` and `/path/to/imagenet` should contain `train` and `val` 
 directories for training and test samples respectively with multiple subdirectories corresponding to
 the classes (samples belonging to the same class is stored in a single directory)
 
