@@ -85,12 +85,20 @@ def main():
     # basic experimental settings
     args = parse_args()
     train_loader, test_loader = get_dataloader(args)
+
+    # instantiate two models trained by the standard method and APART for comparison
     normal_model, apart_model = get_model(args), get_model(args)
+
+    # make sure these two models share the same initial weights
     apart_model.load_state_dict(normal_model.state_dict())
+
+    # instantiate the optimizers for both the models
     normal_optimizer, normal_lr_scheduler = get_optimizer(args, normal_model)
     apart_optimizer, apart_lr_scheduler = get_optimizer(args, apart_model)
+
     # instantiate APART with specified perturbation radius and group number
     apart = APART(apart_model, args.epsilon, args.groups).to(DEVICE)
+
     for epoch in range(200):
         sample_num, normal_acc, apart_acc = 0.0, 0.0, 0.0
         normal_model.train(), apart_model.train()
