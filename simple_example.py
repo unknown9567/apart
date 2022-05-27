@@ -48,8 +48,8 @@ def get_dataloader(args):
     # standard augmentation for CIFAR
     transforms = [T.RandomCrop(32, 4), T.RandomHorizontalFlip(), T.ToTensor(), normalize]
     dataset_cls = {'cifar10': datasets.CIFAR10, 'cifar100': datasets.CIFAR100}[args.dataset]
-    train_dataset = dataset_cls('./data/dataset', True, T.Compose(transforms), download=True)
-    test_dataset = dataset_cls('./data/dataset', False, T.Compose([T.ToTensor(), normalize]), download=True)
+    train_dataset = dataset_cls('./data/datasets', True, T.Compose(transforms), download=True)
+    test_dataset = dataset_cls('./data/datasets', False, T.Compose([T.ToTensor(), normalize]), download=True)
     # drop the last batch to avoid incorrectly grouping samples
     return DataLoader(train_dataset, shuffle=True, batch_size=128, num_workers=2, drop_last=True), \
            DataLoader(test_dataset, shuffle=True, batch_size=128, num_workers=2)
