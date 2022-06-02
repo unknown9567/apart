@@ -25,7 +25,7 @@ class ImageNetModel(ImageNetModelBase):
             lr=args.lr, momentum=args.momentum, weight_decay=args.weight_decay
         )
         scheduler = torch.optim.lr_scheduler.MultiStepLR(
-            optimizer, [int(0.5 * args.epochs), int(0.75 * args.epochs)], 0.1
+            optimizer, [int(epoch * args.epochs / 105) for epoch in [30, 60, 90, 100]], 0.1
         )
         return [optimizer], [scheduler]
 
