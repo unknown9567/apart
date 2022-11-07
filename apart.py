@@ -5,7 +5,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 from torch.nn.modules.batchnorm import _BatchNorm
 
-__all__ = ['APARTv2']
+__all__ = ['APART']
 
 
 # Rescale the unbiased estimator to get a biased one
