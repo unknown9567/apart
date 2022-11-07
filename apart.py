@@ -5,7 +5,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 from torch.nn.modules.batchnorm import _BatchNorm
 
-__all__ = ['APART']
+__all__ = ['APARTv2']
 
 
 # Rescale the unbiased estimator to get a biased one
@@ -54,8 +54,12 @@ class Hook(nn.Module):
         self.mode = 'original'
         self.affine_parameters = []
         self.track_running_stats = None
+        self.register_batch_norm(batch_norm)
+
+    def register_batch_norm(self, batch_norm):
         batch_norm.register_forward_hook(self.forward_hook)
         batch_norm.register_forward_pre_hook(self.forward_pre_hook)
+        return batch_norm
 
     def forward_pre_hook(self, module, input):
         if self.mode == 'original':
@@ -174,33 +178,7 @@ class Hook(nn.Module):
 
 
 class APART(nn.ModuleList):
-    r"""APART model-based adversarial training
 
-    Args:
-        model (:class:`torch.nn.Module`): a BN-based model trained by APART
-        epsilon (:class:`float`): the perturbation radius. Default: ``0.1``
-        groups (:class:`int`): the number of groups.
-            groups=0 is equivalent to groups=1. Default: ``0``
-
-    Example:
-        >>> model = ... # instantiate a model
-        >>> optimizer = ... # instantiate a regular SGD optimizer for the model
-        >>> # instantiate apart for the model,
-        >>> # with perturbation radius `epsilon` and group number `n`
-        >>> apart = APART(model, epsilon, n)
-        >>> for x, y in dataloader # draw a batch of samples with the shape (M, C, H, W)
-        >>>     optimizer.zero_grad() # clear gradients stored in the model's parameters
-        >>>     M = x.size(0) # get the batch size
-        >>>     # get the number of samples used in APART's second step, with `ratio` in (0, 1]
-        >>>     N = int(M * ratio)
-        >>>     with apart.to_proxy(): # prepare for APART's first step
-        >>>         loss = M / (M + N) * loss_function(model(x), y)
-        >>>     loss.backward()
-        >>>     with apart.to_adver(): # prepare for APART's second step
-        >>>         loss = N / (M + N) * loss_function(model(x[:N]), y[:N]))
-        >>>     loss.backward()
-        >>>     optimizer.step() # update the model by the gradient generated from APART
-    """
     def __init__(self, model, epsilon=0.1, groups=0):
         super(APART, self).__init__(list(map(
             lambda bn: Hook(bn, epsilon, groups),
@@ -226,3 +204,10 @@ class APART(nn.ModuleList):
     def to_adver(self):
         yield self.set_mode('adver')
         self.set_mode('original')
+
+    def register_batch_norm(self, model):
+        batch_norms = list(filter(
+            lambda l: isinstance(l, _BatchNorm), model.modules()))
+        assert len(batch_norms) == len(self)
+        for batch_norm, apart_hook in zip(batch_norms, self):
+            apart_hook.register_batch_norm(batch_norm)
