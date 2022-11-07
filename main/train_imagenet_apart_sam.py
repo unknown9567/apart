@@ -96,6 +96,7 @@ def get_parser():
 
 def main():
     args = get_parser().parse_args()
+    args.drop_last = (args.groups > 1)
     default_root_dir = LOG_DIR / 'imagenet' / 'apart-sam'
     model, trainer = get_model_and_trainer(ImageNetModel, args, default_root_dir)
     trainer.fit(model)
