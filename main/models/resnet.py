@@ -26,7 +26,9 @@ from torchvision.models.resnet import *
 
 
 def conv3x3(in_planes, out_planes, stride=1):
-    return nn.Conv2d(in_planes, out_planes, kernel_size=3, stride=stride, padding=1, bias=False)
+    return nn.Conv2d(
+        in_planes, out_planes, kernel_size=3,
+        stride=stride, padding=1, bias=False)
 
 
 class PreActBlock(nn.Module):
@@ -42,9 +44,9 @@ class PreActBlock(nn.Module):
 
         self.shortcut = nn.Sequential()
         if stride != 1 or in_planes != self.expansion*planes:
-            self.shortcut = nn.Sequential(
-                nn.Conv2d(in_planes, self.expansion*planes, kernel_size=1, stride=stride, bias=False)
-            )
+            self.shortcut = nn.Sequential(nn.Conv2d(
+                in_planes, self.expansion*planes, kernel_size=1,
+                stride=stride, bias=False))
 
     def forward(self, x):
         out = F.relu(self.bn1(x))

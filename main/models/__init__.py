@@ -1,2 +1,2 @@
-from .resnet import *
 from .wideresnet import *
+from .resnet import *

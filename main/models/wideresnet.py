@@ -25,8 +25,9 @@ class BasicBlock(nn.Module):
         self.relu2 = nn.ReLU(inplace=True)
         self.conv2 = nn.Conv2d(out_planes, out_planes, 3, 1, 1, bias=False)
         self.drop_rate = drop_rate
-        self.shortcut = (in_planes != out_planes or stride != 1) and \
-                        nn.Conv2d(in_planes, out_planes, 1, stride, bias=False)
+        self.shortcut = \
+            (in_planes != out_planes or stride != 1) and \
+            nn.Conv2d(in_planes, out_planes, 1, stride, bias=False)
 
     def residual(self, x):
         x = self.relu1(self.bn1(x))
