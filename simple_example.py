@@ -69,11 +69,9 @@ def get_model(args):
 def get_optimizer(args, model):
     optimizer = torch.optim.SGD(
         model.parameters(), lr=args.lr, momentum=args.momentum,
-        weight_decay=args.weight_decay, nesterov=args.nesterov
-    )
+        weight_decay=args.weight_decay, nesterov=args.nesterov)
     lr_scheduler = torch.optim.lr_scheduler.MultiStepLR(
-        optimizer, args.milestones, args.gamma
-    )
+        optimizer, args.milestones, args.gamma)
     return optimizer, lr_scheduler
 
 
@@ -127,9 +125,10 @@ def main():
                 apart_optimizer.step()
                 apart_acc += eval_acc(pred, y)
 
-                pbar.set_description(f'epoch {epoch}: '
-                                     f'normal: {normal_acc/sample_num*100:.2f}% | ' 
-                                     f'apart: {apart_acc/sample_num*100:.2f}%')
+                pbar.set_description(
+                    f'epoch {epoch}: '
+                    f'normal: {normal_acc/sample_num*100:.2f}% | ' 
+                    f'apart: {apart_acc/sample_num*100:.2f}%')
 
         sample_num, normal_acc, apart_acc = 0.0, 0.0, 0.0
         normal_model.eval(), apart_model.eval()
@@ -144,16 +143,14 @@ def main():
                 with torch.no_grad():
                     apart_acc += eval_acc(apart_model(x), y)
 
-                pbar.set_description(f'eval: '
-                                     f'normal: {normal_acc / sample_num * 100:.2f}% | '
-                                     f'apart: {apart_acc / sample_num * 100:.2f}% | '
-                                     f'gap: {(apart_acc - normal_acc) / sample_num * 100:.2f}%')
+                pbar.set_description(
+                    f'eval: '
+                    f'normal: {normal_acc / sample_num * 100:.2f}% | '
+                    f'apart: {apart_acc / sample_num * 100:.2f}% | '
+                    f'gap: {(apart_acc - normal_acc) / sample_num * 100:.2f}%')
 
         normal_lr_scheduler.step(), apart_lr_scheduler.step()
 
 
 if __name__ == '__main__':
     main()
-
-
-
