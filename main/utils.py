@@ -10,5 +10,6 @@ DATA_DIR.mkdir(parents=True, exist_ok=True)
 
 
 def get_func_kwargs(func, kwargs):
-    return {arg: kwargs[arg] for arg in
-            set(inspect.getfullargspec(func).args) & set(kwargs)}
+    return {
+        arg: kwargs[arg] for arg in
+        set(inspect.getfullargspec(func).args) & set(kwargs)}
