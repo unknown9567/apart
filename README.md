@@ -99,6 +99,7 @@ with apart.to_adver():
 Once the repo is cloned, experiments can be run using 
 `simple_example.py` or `main/train_*_*.py`.
 
+
 ### Simple Example
 
 `simple_example.py` shows how to deploy `APART` class in `apart.py` by a simple example, 
@@ -182,9 +183,11 @@ python main/train_imagenet_apart_sam.py --data_dir /path/to/imagenet --model res
 directories for training and test samples respectively with multiple subdirectories corresponding to
 the classes (samples belonging to the same class is stored in a single directory)
 
+
 #### GPUs
 
 To set the number of GPUs used in training, use `--gpus`
+
 
 #### Output
 
