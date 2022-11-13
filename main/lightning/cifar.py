@@ -20,8 +20,7 @@ class CIFAR(torch.utils.data.Dataset):
         transforms.append(self.normalize)
         self.dataset = dataset_cls(
             str(DATA_DIR / 'datasets' / 'cifar'), download=True, train=train,
-            transform=T.Compose(transforms)
-        )
+            transform=T.Compose(transforms))
 
     def __len__(self):
         return len(self.dataset)
@@ -58,11 +57,9 @@ class CIFARModelBase(pl.LightningModule):
         args = self.hparams
         optimizer = torch.optim.SGD(
             self.parameters(), lr=args.lr,
-            momentum=args.momentum, weight_decay=args.weight_decay
-        )
+            momentum=args.momentum, weight_decay=args.weight_decay)
         scheduler = torch.optim.lr_scheduler.MultiStepLR(
-            optimizer, [int(0.5 * args.epochs), int(0.75 * args.epochs)], 0.1
-        )
+            optimizer, [int(0.5 * args.epochs), int(0.75 * args.epochs)], 0.1)
         return [optimizer], [scheduler]
 
     def on_epoch_end(self):
@@ -74,15 +71,13 @@ class CIFARModelBase(pl.LightningModule):
         return torch.utils.data.DataLoader(
             self.train_dataset, shuffle=True,
             batch_size=args.batch_size, num_workers=args.num_workers,
-            pin_memory=False, drop_last=getattr(args, 'drop_last', False)
-        )
+            pin_memory=False, drop_last=getattr(args, 'drop_last', False))
 
     def val_dataloader(self):
         args = self.hparams
         return torch.utils.data.DataLoader(
             self.val_dataset, shuffle=False, batch_size=args.batch_size,
-            num_workers=args.num_workers, pin_memory=False
-        )
+            num_workers=args.num_workers, pin_memory=False)
 
     @staticmethod
     def topk_acc(out, y, topk=(1,)):

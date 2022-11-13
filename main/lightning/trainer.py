@@ -16,8 +16,7 @@ class MeterlessProgressBar(ProgressBar):
             desc='Training', initial=self.train_batch_idx,
             position=(2 * self.process_position), disable=self.is_disabled,
             leave=True, dynamic_ncols=False, ncols=100, file=sys.stdout,
-            smoothing=0,
-        )
+            smoothing=0)
         return bar
 
     def init_validation_tqdm(self):
@@ -25,16 +24,14 @@ class MeterlessProgressBar(ProgressBar):
         bar = tqdm(
             desc='Validating', position=(2 * self.process_position + has_main_bar),
             disable=self.is_disabled, leave=False, dynamic_ncols=False,
-            ncols=100, file=sys.stdout
-        )
+            ncols=100, file=sys.stdout)
         return bar
 
     def init_test_tqdm(self):
         bar = tqdm(
             desc="Testing", position=(2 * self.process_position),
             disable=self.is_disabled, leave=True, dynamic_ncols=False,
-            ncols=100, file=sys.stdout
-        )
+            ncols=100, file=sys.stdout)
         return bar
 
 
@@ -64,8 +61,9 @@ def get_model_and_trainer(lightning_model_cls, args, default_root_dir):
     pl.seed_everything(args.seed)
     if args.resume:
         assert args.resume_dir
-        checkpoint_path = sorted(Path(args.resume_dir).rglob('*.ckpt'),
-                                 key=lambda x: int(x.stem.split('-')[0][6:]))[-1]
+        checkpoint_path = sorted(
+            Path(args.resume_dir).rglob('*.ckpt'),
+            key=lambda x: int(x.stem.split('-')[0][6:]))[-1]
         with open(Path(args.resume_dir) / 'hparams.yaml', 'r') as f:
             args.__dict__.update(yaml.load(f, Loader=yaml.FullLoader))
         args.resume_from_checkpoint = str(checkpoint_path)

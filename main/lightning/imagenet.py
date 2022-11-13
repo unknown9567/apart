@@ -12,8 +12,7 @@ from main.utils import DATA_DIR, get_func_kwargs
 class ImageNetModelBase(pl.LightningModule):
 
     normalize = T.Normalize(
-        mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]
-    )
+        mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
 
     def get_model(self):
         args = self.hparams
@@ -29,26 +28,24 @@ class ImageNetModelBase(pl.LightningModule):
         return model
 
     def setup(self, stage=None):
-        self.train_dataset = \
-            ImageFolder(Path(self.hparams.data_dir) / 'train',
-                        T.Compose([T.RandomResizedCrop(224),
-                                   T.RandomHorizontalFlip(),
-                                   T.ToTensor(), self.normalize]))
-        self.val_dataset = \
-            ImageFolder(Path(self.hparams.data_dir) / 'val',
-                        T.Compose([T.Resize(256), T.CenterCrop(224),
-                                   T.ToTensor(), self.normalize]))
+        self.train_dataset = ImageFolder(
+            Path(self.hparams.data_dir) / 'train',
+            T.Compose([T.RandomResizedCrop(224),
+                       T.RandomHorizontalFlip(),
+                       T.ToTensor(), self.normalize]))
+        self.val_dataset = ImageFolder(
+            Path(self.hparams.data_dir) / 'val',
+            T.Compose([T.Resize(256), T.CenterCrop(224),
+                       T.ToTensor(), self.normalize]))
 
     def configure_optimizers(self):
         args = self.hparams
-        optimizer = torch.optim.SGD(self.parameters(), lr=args.lr,
-                                    momentum=args.momentum,
-                                    weight_decay=args.weight_decay)
+        optimizer = torch.optim.SGD(
+            self.parameters(), lr=args.lr,
+            momentum=args.momentum, weight_decay=args.weight_decay)
         scheduler = torch.optim.lr_scheduler.MultiStepLR(
             optimizer,
-            [int(epoch * args.epochs / 105) for epoch in [30, 60, 90, 100]],
-            0.1
-        )
+            [int(epoch * args.epochs / 105) for epoch in [30, 60, 90, 100]], 0.1)
         return [optimizer], [scheduler]
 
     def train_dataloader(self):
@@ -58,15 +55,13 @@ class ImageNetModelBase(pl.LightningModule):
             batch_size=args.batch_size,
             num_workers=args.num_workers,
             pin_memory=True,
-            drop_last=getattr(args, 'drop_last', False)
-        )
+            drop_last=getattr(args, 'drop_last', False))
 
     def val_dataloader(self):
         args = self.hparams
         return torch.utils.data.DataLoader(
             self.val_dataset, shuffle=False, batch_size=args.batch_size,
-            num_workers=args.num_workers, pin_memory=True
-        )
+            num_workers=args.num_workers, pin_memory=True)
 
     @staticmethod
     def topk_acc(out, y, topk=(1,)):
