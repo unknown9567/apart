@@ -22,11 +22,10 @@ class ImageNetModel(ImageNetModelBase):
         args = self.hparams
         optimizer = SAM(
             self.parameters(), torch.optim.SGD, args.rho, adaptive=False,
-            lr=args.lr, momentum=args.momentum, weight_decay=args.weight_decay
-        )
+            lr=args.lr, momentum=args.momentum, weight_decay=args.weight_decay)
         scheduler = torch.optim.lr_scheduler.MultiStepLR(
-            optimizer, [int(epoch * args.epochs / 105) for epoch in [30, 60, 90, 100]], 0.1
-        )
+            optimizer, [int(epoch * args.epochs / 105)
+                        for epoch in [30, 60, 90, 100]], 0.1)
         return [optimizer], [scheduler]
 
     def on_train_start(self):
@@ -62,8 +61,8 @@ class ImageNetModel(ImageNetModelBase):
 
         split = int(ratio * x.size(0))
         self.manual_backward(
-            ratio / (1.0 + ratio) * F.cross_entropy(self(x[:split], 'adver'), y[:split])
-        )
+            ratio / (1.0 + ratio) *
+            F.cross_entropy(self(x[:split], 'adver'), y[:split]))
         self.optimizers().second_step(zero_grad=False)
 
         if self.trainer.is_last_batch:

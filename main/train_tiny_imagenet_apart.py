@@ -49,8 +49,8 @@ class TinyImageNetModel(TinyImageNetModelBase):
 
         split = int(ratio * x.size(0))
         self.manual_backward(
-            ratio / (1.0 + ratio) * F.cross_entropy(self(x[:split], 'adver'), y[:split])
-        )
+            ratio / (1.0 + ratio) *
+            F.cross_entropy(self(x[:split], 'adver'), y[:split]))
 
         self.optimizers().step()
         if self.trainer.is_last_batch:
@@ -81,7 +81,8 @@ def main():
     args = get_parser().parse_args()
     args.drop_last = (args.groups > 1)
     default_root_dir = LOG_DIR / 'tiny-imagenet' / 'apart'
-    model, trainer = get_model_and_trainer(TinyImageNetModel, args, default_root_dir)
+    model, trainer = get_model_and_trainer(
+        TinyImageNetModel, args, default_root_dir)
     trainer.fit(model)
 
 

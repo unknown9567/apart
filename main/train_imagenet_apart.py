@@ -49,8 +49,8 @@ class ImageNetModel(ImageNetModelBase):
 
         split = int(ratio * x.size(0))
         self.manual_backward(
-            ratio / (1.0 + ratio) * F.cross_entropy(self(x[:split], 'adver'), y[:split])
-        )
+            ratio / (1.0 + ratio) *
+            F.cross_entropy(self(x[:split], 'adver'), y[:split]))
 
         self.optimizers().step()
         if self.trainer.is_last_batch:

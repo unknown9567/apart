@@ -41,7 +41,8 @@ def get_parser():
 def main():
     args = get_parser().parse_args()
     default_root_dir = LOG_DIR / 'tiny-imagenet' / 'standard'
-    model, trainer = get_model_and_trainer(TinyImageNetModel, args, default_root_dir)
+    model, trainer = get_model_and_trainer(
+        TinyImageNetModel, args, default_root_dir)
     trainer.fit(model)
 
 

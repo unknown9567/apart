@@ -21,7 +21,8 @@ class CIFARModel(CIFARModelBase):
         out = self(x)
         loss = F.cross_entropy(out, y)
         self.log('loss', loss, on_step=False, on_epoch=True)
-        self.log('acc', self.topk_acc(out, y)[0], on_step=False, on_epoch=True)
+        self.log('acc', self.topk_acc(out, y)[0],
+                 on_step=False, on_epoch=True)
         return loss
 
     @torch.no_grad()

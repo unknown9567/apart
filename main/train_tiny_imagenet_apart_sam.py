@@ -22,11 +22,9 @@ class TinyImageNetModel(TinyImageNetModelBase):
         args = self.hparams
         optimizer = SAM(
             self.parameters(), torch.optim.SGD, args.rho, adaptive=False,
-            lr=args.lr, momentum=args.momentum, weight_decay=args.weight_decay
-        )
+            lr=args.lr, momentum=args.momentum, weight_decay=args.weight_decay)
         scheduler = torch.optim.lr_scheduler.MultiStepLR(
-            optimizer, [int(0.5 * args.epochs), int(0.75 * args.epochs)], 0.1
-        )
+            optimizer, [int(0.5 * args.epochs), int(0.75 * args.epochs)], 0.1)
         return [optimizer], [scheduler]
 
     def on_train_start(self):
@@ -62,8 +60,8 @@ class TinyImageNetModel(TinyImageNetModelBase):
 
         split = int(ratio * x.size(0))
         self.manual_backward(
-            ratio / (1.0 + ratio) * F.cross_entropy(self(x[:split], 'adver'), y[:split])
-        )
+            ratio / (1.0 + ratio) *
+            F.cross_entropy(self(x[:split], 'adver'), y[:split]))
         self.optimizers().second_step(zero_grad=False)
 
         if self.trainer.is_last_batch:
@@ -98,7 +96,8 @@ def main():
     args = get_parser().parse_args()
     args.drop_last = (args.groups > 1)
     default_root_dir = LOG_DIR / 'tiny-imagenet' / 'apart-sam'
-    model, trainer = get_model_and_trainer(TinyImageNetModel, args, default_root_dir)
+    model, trainer = get_model_and_trainer(
+        TinyImageNetModel, args, default_root_dir)
     trainer.fit(model)
 
 
