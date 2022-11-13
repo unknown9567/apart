@@ -24,8 +24,9 @@ class TinyImageNetModel(TinyImageNetModelBase):
             self.parameters(), torch.optim.SGD, args.rho, adaptive=False,
             lr=args.lr, momentum=args.momentum, weight_decay=args.weight_decay)
         scheduler = torch.optim.lr_scheduler.MultiStepLR(
-            optimizer, [int(0.5 * args.epochs), int(0.75 * args.epochs)], 0.1)
-        return [optimizer], [scheduler]
+            optimizer.base_optimizer,
+            [int(0.5 * args.epochs), int(0.75 * args.epochs)], 0.1)
+        return [optimizer, optimizer.base_optimizer], [scheduler]
 
     def on_train_start(self):
         if self.hparams.sync_batchnorm:
@@ -56,13 +57,13 @@ class TinyImageNetModel(TinyImageNetModelBase):
         self.log('top1', top1, on_step=False, on_epoch=True)
         self.log('top5', top5, on_step=False, on_epoch=True)
         self.manual_backward(1.0 / (1.0 + ratio) * loss)
-        self.optimizers().first_step(zero_grad=False)
+        self.optimizers()[0].first_step(zero_grad=False)
 
         split = int(ratio * x.size(0))
         self.manual_backward(
             ratio / (1.0 + ratio) *
             F.cross_entropy(self(x[:split], 'adver'), y[:split]))
-        self.optimizers().second_step(zero_grad=False)
+        self.optimizers()[0].second_step(zero_grad=False)
 
         if self.trainer.is_last_batch:
             self.lr_schedulers().step()
